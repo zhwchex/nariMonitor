@@ -35,9 +35,17 @@ public class QuoteOfTheMomentServerHandler extends SimpleChannelInboundHandler<D
     public void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) throws Exception {
         System.err.println(packet);
         String aim = packet.content().toString(CharsetUtil.UTF_8);
+        String regex = "^<([0-9])>\\s+(\\d{4}-\\d{2}-\\d{2}+\\s+\\d{2}:\\d{2}:\\d{2})\\s+(\\S+)\\s+(\\w+)\\s+(\\S+)\\s+(\\S+)\\s+(.*)\\|(\\d+\\.\\d+\\.\\d+\\.\\d+)&(\\d+\\.\\d+\\.\\d+\\.\\d+)$";
 
-        String regex = "([0-9])";//"^<([0-9])>\\s+(\\d{4}-\\d{2}-\\d{2}+\\s+\\d{2}:\\d{2}:\\d{2})\\s+(\\S+)\\s+(\\w+)\\s+(\\S+)\\s+(\\S+)\\s+(.*)\\|(\\d+\\.\\d+\\.\\d+\\.\\d+)&(\\d+\\.\\d+\\.\\d+\\.\\d+)$";
-        match(regex, aim);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(aim);
+
+        while (matcher.find()){
+            System.out.println(matcher.group(4));
+            System.out.println(matcher.group(5));
+            System.out.println(matcher.group(6));
+        }
+
         //System.out.println(packet.content().toString(CharsetUtil.UTF_8));
         /*
         if ("QOTM?".equals(packet.content().toString(CharsetUtil.UTF_8))) {
@@ -56,13 +64,5 @@ public class QuoteOfTheMomentServerHandler extends SimpleChannelInboundHandler<D
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
        cause.printStackTrace();
         // We don't close the channel because we can keep serving requests.
-    }
-
-    public boolean match(String regex, String str) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(str);
-
-        System.out.println( matcher.group());
-        return matcher.matches();
     }
 }
